@@ -1,6 +1,9 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
+import {Component, ElementRef, NgZone, ViewChild} from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
+import { MapsAPILoader } from '@agm/core';
+import {} from '@types/googlemaps';
+
 declare var google;
 @Component({
   selector: 'page-home',
@@ -8,14 +11,16 @@ declare var google;
 })
 export class HomePage {
   @ViewChild('map') mapElement: ElementRef;
+  @ViewChild('search') public searchElement: ElementRef;
   map: any;
 
-  constructor(public navCtrl: NavController, public geolocation: Geolocation) {
+  constructor(public navCtrl: NavController, public geolocation: Geolocation,private mapsAPILoader: MapsAPILoader, private ngZone: NgZone) {
 
   }
 
   ionViewDidLoad(){
     this.loadMap();
+    this.loadAutocomplete();
   }
 
   loadMap(){
@@ -60,5 +65,21 @@ export class HomePage {
       infoWindow.open(this.map, marker);
     });
 
+  }
+  loadAutocomplete(){
+    this.mapsAPILoader.load().then(
+      () => {
+        let autocomplete = new google.maps.places.Autocomplete(this.searchElement.nativeElement, { types:["address"] });
+
+        autocomplete.addListener("place_changed", () => {
+          this.ngZone.run(() => {
+            let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+            if(place.geometry === undefined || place.geometry === null ){
+              return;
+            }
+          });
+        });
+      }
+    );
   }
 }

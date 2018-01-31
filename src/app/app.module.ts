@@ -6,7 +6,7 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
 import { Geolocation } from '@ionic-native/geolocation';
-
+import { AgmCoreModule } from '@agm/core';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
@@ -18,6 +18,10 @@ import { SplashScreen } from '@ionic-native/splash-screen';
   ],
   imports: [
     BrowserModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyArzxdnUyF8Njt3X0JEw2s1nUuh2_7Gr5s',
+      libraries: ["places"]
+    }),
     IonicModule.forRoot(MyApp),
   ],
   bootstrap: [IonicApp],
